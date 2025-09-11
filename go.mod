@@ -1,4 +1,4 @@
-odule github.com/funkstarr-wq/listingtree
+module github.com/funkstarr-wq/listingtree
 
 go 1.21
 
