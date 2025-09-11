@@ -1,6 +1,7 @@
-module github.com/funkstarr-wq/listingtree/backend
+package main
 
-go 1.21
+import "fmt"
 
-// This empty go.mod file satisfies Render's Go detection
-// The actual application is built using Node.js as specified in render.yaml
+func main() {
+    fmt.Println("This is a Node.js application. Please check the render.yaml for build instructions.")
+}
