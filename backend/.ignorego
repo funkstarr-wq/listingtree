@@ -1,0 +1,3 @@
+# This file tells Render to ignore Go build process
+# and use the Node.js build process instead
+NODEJS_BUILD=true
