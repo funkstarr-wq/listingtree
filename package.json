@@ -1,0 +1,12 @@
+{
+  "name": "servicehub-root",
+  "version": "1.0.0",
+  "description": "Root package.json to prevent Go detection",
+  "scripts": {
+    "build": "echo \"Skipping build in root\"",
+    "start": "cd backend && npm start"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
