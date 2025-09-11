@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const path = require('path');
 require('dotenv').config();
 
 // Import routes
@@ -13,12 +14,21 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Routes
+// Serve static files from the frontend in production
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '../frontend')));
+  
+  app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend', 'index.html'));
+  });
+}
+
+// API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/listings', listingRoutes);
 
-// Basic route
-app.get('/', (req, res) => {
+// Basic API route
+app.get('/api', (req, res) => {
   res.json({ message: 'ServiceHub API is running!' });
 });
 
