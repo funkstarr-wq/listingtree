@@ -327,3 +327,176 @@ async function handleEditListing(e) {
         }
     } catch (error) {
         showError(editListingError, 'Error updating listing. Please try again.');
+        console.error('Error:', error);
+    }
+}
+
+// Load User Listings
+async function loadUserListings() {
+    const token = localStorage.getItem('token');
+    
+    if (!token || !dashboardContent) {
+        if (dashboardContent) {
+            dashboardContent.innerHTML = '<p>Please log in to view your listings.</p>';
+        }
+        return;
+    }
+    
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/listings/user/my-listings`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        
+        if (response.ok) {
+            const listings = await response.json();
+            displayListings(listings);
+        } else {
+            dashboardContent.innerHTML = '<p>Error loading your listings. Please try again.</p>';
+        }
+    } catch (error) {
+        console.error('Error loading listings:', error);
+        dashboardContent.innerHTML = '<p>Error loading your listings. Please try again.</p>';
+    }
+}
+
+// Display Listings
+function displayListings(listings) {
+    if (!dashboardContent) return;
+    
+    if (listings.length === 0) {
+        dashboardContent.innerHTML = `
+            <div style="text-align: center; padding: 40px;">
+                <i class="fas fa-clipboard-list" style="font-size: 60px; color: #ddd; margin-bottom: 20px;"></i>
+                <h3>No Listings Yet</h3>
+                <p>Get started by adding your first service listing!</p>
+                <button class="btn btn-primary" id="addFirstListingBtn">Add Your First Listing</button>
+            </div>
+        `;
+        
+        const addFirstListingBtn = document.getElementById('addFirstListingBtn');
+        if (addFirstListingBtn) {
+            addFirstListingBtn.addEventListener('click', () => {
+                showModal(addListingModal);
+            });
+        }
+        
+        return;
+    }
+    
+    dashboardContent.innerHTML = `
+        <div class="listings-grid">
+            ${listings.map(listing => `
+                <div class="listing-card" data-id="${listing._id}">
+                    <div class="listing-header">
+                        <h3>${listing.title}</h3>
+                        <span class="listing-price">£${listing.price}</span>
+                    </div>
+                    <div class="listing-category">${listing.category}</div>
+                    <p class="listing-description">${listing.description}</p>
+                    <div class="listing-footer">
+                        <span class="listing-date">Posted: ${new Date(listing.createdAt).toLocaleDateString()}</span>
+                        <div class="listing-actions">
+                            <button class="btn btn-outline edit-listing-btn" data-id="${listing._id}">Edit</button>
+                            <button class="btn btn-danger delete-listing-btn" data-id="${listing._id}">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+    `;
+    
+    // Add event listeners to action buttons
+    document.querySelectorAll('.edit-listing-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const id = e.target.dataset.id;
+            editListing(id);
+        });
+    });
+    
+    document.querySelectorAll('.delete-listing-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const id = e.target.dataset.id;
+            deleteListing(id);
+        });
+    });
+}
+
+// Edit Listing
+async function editListing(id) {
+    const token = localStorage.getItem('token');
+    
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/listings/${id}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        
+        if (response.ok) {
+            const listing = await response.json();
+            
+            // Populate edit form
+            document.getElementById('editListingId').value = listing._id;
+            document.getElementById('editListingTitle').value = listing.title;
+            document.getElementById('editListingCategory').value = listing.category;
+            document.getElementById('editListingDescription').value = listing.description;
+            document.getElementById('editListingPrice').value = listing.price;
+            
+            // Show edit modal
+            showModal(editListingModal);
+        } else {
+            alert('Error loading listing details');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error loading listing details');
+    }
+}
+
+// Delete Listing
+async function deleteListing(id) {
+    if (!confirm('Are you sure you want to delete this listing?')) {
+        return;
+    }
+    
+    const token = localStorage.getItem('token');
+    
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/listings/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        
+        if (response.ok) {
+            // Reload listings
+            loadUserListings();
+            alert('Listing deleted successfully!');
+        } else {
+            const data = await response.json();
+            alert(data.message || 'Error deleting listing');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error deleting listing');
+    }
+}
+
+// Show Error Message
+function showError(element, message) {
+    if (!element) return;
+    
+    element.textContent = message;
+    element.style.display = 'block';
+    
+    // Hide error after 5 seconds
+    setTimeout(() => {
+        element.style.display = 'none';
+    }, 5000);
+}
+
+// Initialize the app when DOM is loaded
+document.addEventListener('DOMContentLoaded', initApp);
