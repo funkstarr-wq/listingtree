@@ -1,9 +1,5 @@
-// frontend/script.js (Main entry point)
-import { ELEMENT_IDS } from './config.js';
-import { getElement } from './modules/utils.js';
-import { initModals, showModal } from './modules/modals.js';
-import { checkAuthStatus, handleLogin, handleRegister, handleLogout } from './modules/auth.js';
-import { handleAddListing, handleEditListing } from './modules/listings.js';
+// API Base URL
+const API_BASE_URL = window.location.origin;
 
 // Initialize the application when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
@@ -16,9 +12,6 @@ function initApp() {
     // Setup event listeners
     setupEventListeners();
     
-    // Initialize modals
-    initModals();
-    
     // Check if user is already logged in
     checkAuthStatus();
 }
@@ -26,73 +19,83 @@ function initApp() {
 // Setup all event listeners
 function setupEventListeners() {
     // Login button
-    const loginBtn = getElement(ELEMENT_IDS.LOGIN_BTN);
+    const loginBtn = document.getElementById('loginBtn');
     if (loginBtn) {
-        loginBtn.addEventListener('click', () => showModal(ELEMENT_IDS.LOGIN_MODAL));
+        loginBtn.addEventListener('click', function() {
+            console.log('Login button clicked');
+            showModal('loginModal');
+        });
     }
     
     // Register button
-    const registerBtn = getElement(ELEMENT_IDS.REGISTER_BTN);
+    const registerBtn = document.getElementById('registerBtn');
     if (registerBtn) {
-        registerBtn.addEventListener('click', () => showModal(ELEMENT_IDS.REGISTER_MODAL));
+        registerBtn.addEventListener('click', function() {
+            console.log('Register button clicked');
+            showModal('registerModal');
+        });
     }
     
     // Add listing button
-    const addListingBtn = getElement(ELEMENT_IDS.ADD_LISTING_BTN);
+    const addListingBtn = document.getElementById('addListingBtn');
     if (addListingBtn) {
-        addListingBtn.addEventListener('click', () => showModal(ELEMENT_IDS.ADD_LISTING_MODAL));
+        addListingBtn.addEventListener('click', function() {
+            console.log('Add listing button clicked');
+            showModal('addListingModal');
+        });
     }
     
     // Switch to register link
-    const switchToRegister = getElement(ELEMENT_IDS.SWITCH_TO_REGISTER);
+    const switchToRegister = document.getElementById('switchToRegister');
     if (switchToRegister) {
-        switchToRegister.addEventListener('click', (e) => {
+        switchToRegister.addEventListener('click', function(e) {
             e.preventDefault();
-            showModal(ELEMENT_IDS.REGISTER_MODAL);
+            console.log('Switch to register clicked');
+            hideAllModals();
+            showModal('registerModal');
         });
     }
     
     // Switch to login link
-    const switchToLogin = getElement(ELEMENT_IDS.SWITCH_TO_LOGIN);
+    const switchToLogin = document.getElementById('switchToLogin');
     if (switchToLogin) {
-        switchToLogin.addEventListener('click', (e) => {
+        switchToLogin.addEventListener('click', function(e) {
             e.preventDefault();
-            showModal(ELEMENT_IDS.LOGIN_MODAL);
+            console.log('Switch to login clicked');
+            hideAllModals();
+            showModal('loginModal');
         });
     }
     
     // Logout button
-    const logoutBtn = getElement(ELEMENT_IDS.LOGOUT_BTN);
+    const logoutBtn = document.getElementById('logoutBtn');
     if (logoutBtn) {
         logoutBtn.addEventListener('click', handleLogout);
     }
     
     // Hero button
-    const heroBtn = getElement(ELEMENT_IDS.HERO_BTN);
+    const heroBtn = document.getElementById('heroBtn');
     if (heroBtn) {
-        heroBtn.addEventListener('click', () => showModal(ELEMENT_IDS.REGISTER_MODAL));
+        heroBtn.addEventListener('click', function() {
+            console.log('Hero button clicked');
+            showModal('registerModal');
+        });
     }
     
     // Form submissions
-    const loginForm = getElement(ELEMENT_IDS.LOGIN_FORM);
+    const loginForm = document.getElementById('loginForm');
     if (loginForm) {
         loginForm.addEventListener('submit', handleLogin);
     }
     
-    const registerForm = getElement(ELEMENT_IDS.REGISTER_FORM);
+    const registerForm = document.getElementById('registerForm');
     if (registerForm) {
         registerForm.addEventListener('submit', handleRegister);
     }
     
-    const addListingForm = getElement(ELEMENT_IDS.ADD_LISTING_FORM);
+    const addListingForm = document.getElementById('addListingForm');
     if (addListingForm) {
         addListingForm.addEventListener('submit', handleAddListing);
     }
     
-    const editListingForm = getElement(ELEMENT_IDS.EDIT_LISTING_FORM);
-    if (editListingForm) {
-        editListingForm.addEventListener('submit', handleEditListing);
-    }
-    
-    console.log('Event listeners setup complete');
-}
+    //
