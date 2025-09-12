@@ -1,68 +1,93 @@
 // API Base URL
 const API_BASE_URL = window.location.origin;
 
-// DOM Elements
-let loginModal, registerModal, addListingModal, editListingModal;
-let loginForm, registerForm, addListingForm, editListingForm;
-let loginBtn, registerBtn, addListingBtn;
-let dashboardSection, dashboardContent;
-let loginError, registerError, listingError, editListingError;
-let switchToRegister, switchToLogin, logoutBtn;
-let userWelcome, userName, authButtons, heroBtn;
+// Initialize the application when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('ServiceHub initialized');
+    initApp();
+});
 
 // Initialize the application
 function initApp() {
-    // Get DOM elements
-    loginModal = document.getElementById('loginModal');
-    registerModal = document.getElementById('registerModal');
-    addListingModal = document.getElementById('addListingModal');
-    editListingModal = document.getElementById('editListingModal');
-    loginForm = document.getElementById('loginForm');
-    registerForm = document.getElementById('registerForm');
-    addListingForm = document.getElementById('addListingForm');
-    editListingForm = document.getElementById('editListingForm');
-    loginBtn = document.getElementById('loginBtn');
-    registerBtn = document.getElementById('registerBtn');
-    addListingBtn = document.getElementById('addListingBtn');
-    dashboardSection = document.getElementById('dashboardSection');
-    dashboardContent = document.getElementById('dashboardContent');
-    loginError = document.getElementById('loginError');
-    registerError = document.getElementById('registerError');
-    listingError = document.getElementById('listingError');
-    editListingError = document.getElementById('editListingError');
-    switchToRegister = document.getElementById('switchToRegister');
-    switchToLogin = document.getElementById('switchToLogin');
-    logoutBtn = document.getElementById('logoutBtn');
-    userWelcome = document.getElementById('userWelcome');
-    userName = document.getElementById('userName');
-    authButtons = document.getElementById('authButtons');
-    heroBtn = document.getElementById('heroBtn');
-
+    // Setup event listeners
+    setupEventListeners();
+    
     // Check if user is already logged in
     checkAuthStatus();
+}
+
+// Setup all event listeners
+function setupEventListeners() {
+    // Login button
+    const loginBtn = document.getElementById('loginBtn');
+    if (loginBtn) {
+        loginBtn.addEventListener('click', () => showModal('loginModal'));
+    }
     
-    // Add event listeners to buttons
-    if (loginBtn) loginBtn.addEventListener('click', () => showModal(loginModal));
-    if (registerBtn) registerBtn.addEventListener('click', () => showModal(registerModal));
-    if (addListingBtn) addListingBtn.addEventListener('click', () => showModal(addListingModal));
-    if (switchToRegister) switchToRegister.addEventListener('click', (e) => {
-        e.preventDefault();
-        hideAllModals();
-        showModal(registerModal);
-    });
-    if (switchToLogin) switchToLogin.addEventListener('click', (e) => {
-        e.preventDefault();
-        hideAllModals();
-        showModal(loginModal);
-    });
-    if (logoutBtn) logoutBtn.addEventListener('click', handleLogout);
-    if (heroBtn) heroBtn.addEventListener('click', () => showModal(registerModal));
+    // Register button
+    const registerBtn = document.getElementById('registerBtn');
+    if (registerBtn) {
+        registerBtn.addEventListener('click', () => showModal('registerModal'));
+    }
+    
+    // Add listing button
+    const addListingBtn = document.getElementById('addListingBtn');
+    if (addListingBtn) {
+        addListingBtn.addEventListener('click', () => showModal('addListingModal'));
+    }
+    
+    // Switch to register link
+    const switchToRegister = document.getElementById('switchToRegister');
+    if (switchToRegister) {
+        switchToRegister.addEventListener('click', (e) => {
+            e.preventDefault();
+            hideAllModals();
+            showModal('registerModal');
+        });
+    }
+    
+    // Switch to login link
+    const switchToLogin = document.getElementById('switchToLogin');
+    if (switchToLogin) {
+        switchToLogin.addEventListener('click', (e) => {
+            e.preventDefault();
+            hideAllModals();
+            showModal('loginModal');
+        });
+    }
+    
+    // Logout button
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', handleLogout);
+    }
+    
+    // Hero button
+    const heroBtn = document.getElementById('heroBtn');
+    if (heroBtn) {
+        heroBtn.addEventListener('click', () => showModal('registerModal'));
+    }
     
     // Form submissions
-    if (loginForm) loginForm.addEventListener('submit', handleLogin);
-    if (registerForm) registerForm.addEventListener('submit', handleRegister);
-    if (addListingForm) addListingForm.addEventListener('submit', handleAddListing);
-    if (editListingForm) editListingForm.addEventListener('submit', handleEditListing);
+    const loginForm = document.getElementById('loginForm');
+    if (loginForm) {
+        loginForm.addEventListener('submit', handleLogin);
+    }
+    
+    const registerForm = document.getElementById('registerForm');
+    if (registerForm) {
+        registerForm.addEventListener('submit', handleRegister);
+    }
+    
+    const addListingForm = document.getElementById('addListingForm');
+    if (addListingForm) {
+        addListingForm.addEventListener('submit', handleAddListing);
+    }
+    
+    const editListingForm = document.getElementById('editListingForm');
+    if (editListingForm) {
+        editListingForm.addEventListener('submit', handleEditListing);
+    }
     
     // Close modals when clicking outside
     document.querySelectorAll('.modal').forEach(modal => {
@@ -82,15 +107,17 @@ function initApp() {
     initLocationSearch();
 }
 
-// Functions
-function showModal(modal) {
+// Show modal function
+function showModal(modalId) {
     hideAllModals();
+    const modal = document.getElementById(modalId);
     if (modal) {
         modal.style.display = 'flex';
         document.body.style.overflow = 'hidden'; // Prevent scrolling
     }
 }
 
+// Hide all modals
 function hideAllModals() {
     document.querySelectorAll('.modal').forEach(modal => {
         modal.style.display = 'none';
@@ -123,13 +150,12 @@ function initLocationSearch() {
         
         function searchLocations(postcode) {
             // Simulate API call to postcode lookup service
-            // In a real application, you would use a service like Google Places API or Postcodes.io
             const mockLocations = [
-                { id: 1, name: `London (${postcode})`, lat: 51.5074, lng: -0.1278 },
-                { id: 2, name: `Manchester (${postcode})`, lat: 53.4808, lng: -2.2426 },
-                { id: 3, name: `Birmingham (${postcode})`, lat: 52.4862, lng: -1.8904 },
-                { id: 4, name: `Glasgow (${postcode})`, lat: 55.8642, lng: -4.2518 },
-                { id: 5, name: `Leeds (${postcode})`, lat: 53.8008, lng: -1.5491 }
+                { id: 1, name: `London (${postcode})` },
+                { id: 2, name: `Manchester (${postcode})` },
+                { id: 3, name: `Birmingham (${postcode})` },
+                { id: 4, name: `Glasgow (${postcode})` },
+                { id: 5, name: `Leeds (${postcode})` }
             ];
             
             displayLocationResults(mockLocations);
@@ -149,7 +175,7 @@ function initLocationSearch() {
                 div.textContent = location.name;
                 div.addEventListener('click', () => {
                     locationInput.value = location.name;
-                    postcodeInput.value = location.name; // Show selected location in postcode field
+                    postcodeInput.value = location.name;
                     locationResultsContainer.style.display = 'none';
                 });
                 locationResults.appendChild(div);
@@ -189,8 +215,13 @@ function checkAuthStatus() {
 
 // Show UI for authenticated users
 function showAuthenticatedUI(user) {
+    const userWelcome = document.getElementById('userWelcome');
+    const userName = document.getElementById('userName');
+    const authButtons = document.getElementById('authButtons');
+    const dashboardSection = document.getElementById('dashboardSection');
+    
     if (userWelcome && userName && authButtons) {
-        userName.textContent = `${user.firstName} ${user.lastName}`;
+        userName.textContent = `${user.firstName || user.name || 'User'}`;
         userWelcome.style.display = 'flex';
         authButtons.style.display = 'none';
     }
@@ -202,6 +233,10 @@ function showAuthenticatedUI(user) {
 
 // Show UI for unauthenticated users
 function showUnauthenticatedUI() {
+    const userWelcome = document.getElementById('userWelcome');
+    const authButtons = document.getElementById('authButtons');
+    const dashboardSection = document.getElementById('dashboardSection');
+    
     if (userWelcome && authButtons) {
         userWelcome.style.display = 'none';
         authButtons.style.display = 'flex';
@@ -213,7 +248,7 @@ function showUnauthenticatedUI() {
 
 // Handle login
 async function handleLogin(e) {
-    e.preventDefault();
+    if (e) e.preventDefault();
     
     const email = document.getElementById('loginEmail').value;
     const password = document.getElementById('loginPassword').value;
@@ -221,7 +256,7 @@ async function handleLogin(e) {
     console.log('Login attempt with:', { email: email.substring(0, 3) + '...' });
     
     // Show loading state
-    const submitBtn = loginForm.querySelector('button[type="submit"]');
+    const submitBtn = document.querySelector('#loginForm button[type="submit"]');
     const originalText = submitBtn.textContent;
     submitBtn.textContent = 'Logging in...';
     submitBtn.disabled = true;
@@ -235,42 +270,40 @@ async function handleLogin(e) {
             body: JSON.stringify({ email, password })
         });
         
-        // Check if response is OK
-        if (!response.ok) {
+        if (response.ok) {
+            const data = await response.json();
+            
+            // Save token and user data
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('userData', JSON.stringify({
+                id: data._id,
+                firstName: data.firstName,
+                lastName: data.lastName,
+                company: data.company,
+                email: data.email,
+                phone: data.phone,
+                userType: data.userType,
+                location: data.location
+            }));
+            
+            // Update UI
+            showAuthenticatedUI(data);
+            
+            // Hide modal and clear form
+            hideAllModals();
+            document.getElementById('loginForm').reset();
+            
+        } else {
             const errorData = await response.json().catch(() => ({ message: 'Login failed' }));
-            throw new Error(errorData.message || `Server error: ${response.status}`);
+            showError('loginError', errorData.message || `Server error: ${response.status}`);
         }
-        
-        const data = await response.json();
-        
-        // Save token and user data
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('userData', JSON.stringify({
-            id: data._id,
-            firstName: data.firstName,
-            lastName: data.lastName,
-            company: data.company,
-            email: data.email,
-            phone: data.phone,
-            userType: data.userType,
-            location: data.location
-        }));
-        
-        // Update UI
-        showAuthenticatedUI(data);
-        
-        // Hide modal and clear form
-        hideAllModals();
-        loginForm.reset();
-        
     } catch (error) {
         console.error('Login error:', error);
-        showError(loginError, error.message || 'Login error. Please try again.');
+        showError('loginError', 'Login error. Please try again.');
         
         // Fallback: If API is down, simulate login for demo
         if (error.message.includes('Failed to fetch') || error.message.includes('Network')) {
             console.log('API might be down, using demo mode');
-            // Create a demo user for testing
             const demoUser = {
                 _id: 'demo123',
                 firstName: 'Demo',
@@ -295,7 +328,7 @@ async function handleLogin(e) {
 
 // Handle registration
 async function handleRegister(e) {
-    e.preventDefault();
+    if (e) e.preventDefault();
     
     const firstName = document.getElementById('registerFirstName').value;
     const lastName = document.getElementById('registerLastName').value;
@@ -310,12 +343,12 @@ async function handleRegister(e) {
     
     // Validate location was selected
     if (!location) {
-        showError(registerError, 'Please select a location from the suggestions');
+        showError('registerError', 'Please select a location from the suggestions');
         return;
     }
     
     // Show loading state
-    const submitBtn = registerForm.querySelector('button[type="submit"]');
+    const submitBtn = document.querySelector('#registerForm button[type="submit"]');
     const originalText = submitBtn.textContent;
     submitBtn.textContent = 'Creating account...';
     submitBtn.disabled = true;
@@ -338,50 +371,42 @@ async function handleRegister(e) {
             })
         });
         
-        // Check if response is OK
-        if (!response.ok) {
+        if (response.ok) {
+            const data = await response.json();
+            
+            // Save token and user data
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('userData', JSON.stringify({
+                id: data._id,
+                firstName: data.firstName,
+                lastName: data.lastName,
+                company: data.company,
+                email: data.email,
+                phone: data.phone,
+                userType: data.userType,
+                location: data.location
+            }));
+            
+            // Update UI
+            showAuthenticatedUI(data);
+            
+            // Hide modal and clear form
+            hideAllModals();
+            document.getElementById('registerForm').reset();
+            
+            // Show success message
+            alert('Registration successful! Welcome to ServiceHub.');
+        } else {
             const errorData = await response.json().catch(() => ({ message: 'Registration failed' }));
-            throw new Error(errorData.message || `Server error: ${response.status}`);
+            showError('registerError', errorData.message || `Server error: ${response.status}`);
         }
-        
-        const data = await response.json();
-        
-        // Save token and user data
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('userData', JSON.stringify({
-            id: data._id,
-            firstName: data.firstName,
-            lastName: data.lastName,
-            company: data.company,
-            email: data.email,
-            phone: data.phone,
-            userType: data.userType,
-            location: data.location
-        }));
-        
-        // Update UI
-        showAuthenticatedUI(data);
-        
-        // Hide modal and clear form
-        hideAllModals();
-        registerForm.reset();
-        
-        // Show success message
-        alert('Registration successful! Welcome to ServiceHub.');
     } catch (error) {
         console.error('Registration error:', error);
-        
-        // Handle validation errors
-        if (error.message.includes('User already exists')) {
-            showError(registerError, 'An account with this email already exists');
-        } else {
-            showError(registerError, error.message || 'Registration error. Please try again.');
-        }
+        showError('registerError', 'Registration error. Please try again.');
         
         // Fallback: If API is down, simulate registration for demo
         if (error.message.includes('Failed to fetch') || error.message.includes('Network')) {
             console.log('API might be down, using demo mode');
-            // Create a demo user for testing
             const demoUser = {
                 _id: 'demo-' + Date.now(),
                 firstName: firstName,
@@ -417,7 +442,7 @@ function handleLogout() {
 
 // Handle add listing
 async function handleAddListing(e) {
-    e.preventDefault();
+    if (e) e.preventDefault();
     
     const title = document.getElementById('listingTitle').value;
     const category = document.getElementById('listingCategory').value;
@@ -427,12 +452,12 @@ async function handleAddListing(e) {
     const token = localStorage.getItem('token');
     
     if (!token) {
-        showError(listingError, 'Please log in to create listings');
+        showError('listingError', 'Please log in to create listings');
         return;
     }
     
     // Show loading state
-    const submitBtn = addListingForm.querySelector('button[type="submit"]');
+    const submitBtn = document.querySelector('#addListingForm button[type="submit"]');
     const originalText = submitBtn.textContent;
     submitBtn.textContent = 'Creating...';
     submitBtn.disabled = true;
@@ -447,26 +472,25 @@ async function handleAddListing(e) {
             body: JSON.stringify({ title, category, description, price })
         });
         
-        // Check if response is OK
-        if (!response.ok) {
+        if (response.ok) {
+            const data = await response.json();
+            
+            // Clear form and close modal
+            document.getElementById('addListingForm').reset();
+            hideAllModals();
+            
+            // Reload listings
+            loadUserListings();
+            
+            // Show success message
+            alert('Service listing created successfully!');
+        } else {
             const errorData = await response.json().catch(() => ({ message: 'Error creating listing' }));
-            throw new Error(errorData.message || `Server error: ${response.status}`);
+            showError('listingError', errorData.message || `Server error: ${response.status}`);
         }
-        
-        const data = await response.json();
-        
-        // Clear form and close modal
-        addListingForm.reset();
-        hideAllModals();
-        
-        // Reload listings
-        loadUserListings();
-        
-        // Show success message
-        alert('Service listing created successfully!');
     } catch (error) {
         console.error('Error creating listing:', error);
-        showError(listingError, error.message || 'Error creating service listing. Please try again.');
+        showError('listingError', 'Error creating service listing. Please try again.');
         
         // Fallback: If API is down, simulate listing creation for demo
         if (error.message.includes('Failed to fetch') || error.message.includes('Network')) {
@@ -484,7 +508,7 @@ async function handleAddListing(e) {
 
 // Handle edit listing
 async function handleEditListing(e) {
-    e.preventDefault();
+    if (e) e.preventDefault();
     
     const id = document.getElementById('editListingId').value;
     const title = document.getElementById('editListingTitle').value;
@@ -495,7 +519,7 @@ async function handleEditListing(e) {
     const token = localStorage.getItem('token');
     
     // Show loading state
-    const submitBtn = editListingForm.querySelector('button[type="submit"]');
+    const submitBtn = document.querySelector('#editListingForm button[type="submit"]');
     const originalText = submitBtn.textContent;
     submitBtn.textContent = 'Updating...';
     submitBtn.disabled = true;
@@ -510,25 +534,40 @@ async function handleEditListing(e) {
             body: JSON.stringify({ title, category, description, price })
         });
         
-        // Check if response is OK
-        if (!response.ok) {
+        if (response.ok) {
+            const data = await response.json();
+            
+            // Close modal and reload listings
+            hideAllModals();
+            loadUserListings();
+            
+            // Show success message
+            alert('Service listing updated successfully!');
+        } else {
             const errorData = await response.json().catch(() => ({ message: 'Error updating listing' }));
-            throw new Error(errorData.message || `Server error: ${response.status}`);
+            showError('editListingError', errorData.message || `Server error: ${response.status}`);
         }
-        
-        const data = await response.json();
-        
-        // Close modal and reload listings
-        hideAllModals();
-        loadUserListings();
-        
-        // Show success message
-        alert('Service listing updated successfully!');
     } catch (error) {
         console.error('Error updating listing:', error);
-        showError(editListingError, error.message || 'Error updating service listing. Please try again.');
+        showError('editListingError', 'Error updating service listing. Please try again.');
         
         // Fallback: If API is down, simulate listing update for demo
         if (error.message.includes('Failed to fetch') || error.message.includes('Network')) {
             console.log('API might be down, using demo mode');
             alert('Demo mode: Listing update simulated (backend might be down)');
+            hideAllModals();
+            loadUserListings();
+        }
+    } finally {
+        // Reset button state
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+    }
+}
+
+// Load User Listings
+async function loadUserListings() {
+    const token = localStorage.getItem('token');
+    const dashboardContent = document.getElementById('dashboardContent');
+    
+    if (!
