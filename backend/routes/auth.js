@@ -98,3 +98,14 @@ router.get('/profile', protect, async (req, res) => {
 });
 
 module.exports = router;
+
+// Validation rules
+const registerValidation = [
+  body('firstName').notEmpty().withMessage('First name is required'),
+  body('lastName').notEmpty().withMessage('Last name is required'),
+  body('email').isEmail().withMessage('Please include a valid email'),
+  body('phone').notEmpty().withMessage('Phone number is required'),
+  body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
+  body('userType').isIn(['client', 'professional']).withMessage('User type must be client or professional'),
+  body('location').notEmpty().withMessage('Location is required')
+];
