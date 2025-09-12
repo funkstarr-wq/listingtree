@@ -15,10 +15,13 @@ const generateToken = (id) => {
 
 // Register user
 router.post('/register', [
-  body('name').notEmpty().withMessage('Name is required'),
+  body('firstName').notEmpty().withMessage('First name is required'),
+  body('lastName').notEmpty().withMessage('Last name is required'),
   body('email').isEmail().withMessage('Please include a valid email'),
+  body('phone').notEmpty().withMessage('Phone number is required'),
   body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
-  body('userType').isIn(['client', 'professional']).withMessage('User type must be client or professional')
+  body('userType').isIn(['client', 'professional']).withMessage('User type must be client or professional'),
+  body('location').notEmpty().withMessage('Location is required')
 ], async (req, res) => {
   try {
     // Check for validation errors
@@ -27,7 +30,7 @@ router.post('/register', [
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { name, email, password, userType } = req.body;
+    const { firstName, lastName, company, email, phone, password, userType, location } = req.body;
 
     // Check if user exists
     const userExists = await User.findOne({ email });
@@ -37,18 +40,26 @@ router.post('/register', [
 
     // Create user
     const user = await User.create({
-      name,
+      firstName,
+      lastName,
+      company,
       email,
+      phone,
       password,
-      userType
+      userType,
+      location
     });
 
     if (user) {
       res.status(201).json({
         _id: user._id,
-        name: user.name,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        company: user.company,
         email: user.email,
+        phone: user.phone,
         userType: user.userType,
+        location: user.location,
         token: generateToken(user._id),
       });
     }
@@ -72,9 +83,13 @@ router.post('/login', [
     if (user && (await user.matchPassword(password))) {
       res.json({
         _id: user._id,
-        name: user.name,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        company: user.company,
         email: user.email,
+        phone: user.phone,
         userType: user.userType,
+        location: user.location,
         token: generateToken(user._id),
       });
     } else {
@@ -98,14 +113,3 @@ router.get('/profile', protect, async (req, res) => {
 });
 
 module.exports = router;
-
-// Validation rules
-const registerValidation = [
-  body('firstName').notEmpty().withMessage('First name is required'),
-  body('lastName').notEmpty().withMessage('Last name is required'),
-  body('email').isEmail().withMessage('Please include a valid email'),
-  body('phone').notEmpty().withMessage('Phone number is required'),
-  body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
-  body('userType').isIn(['client', 'professional']).withMessage('User type must be client or professional'),
-  body('location').notEmpty().withMessage('Location is required')
-];
