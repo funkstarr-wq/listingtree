@@ -77,6 +77,9 @@ function initApp() {
     document.querySelectorAll('.close-modal').forEach(button => {
         button.addEventListener('click', hideAllModals);
     });
+    
+    // Initialize location search
+    initLocationSearch();
 }
 
 // Functions
@@ -93,6 +96,78 @@ function hideAllModals() {
         modal.style.display = 'none';
     });
     document.body.style.overflow = 'auto'; // Re-enable scrolling
+}
+
+// Location search functionality
+function initLocationSearch() {
+    const postcodeInput = document.getElementById('registerPostcode');
+    const locationResults = document.getElementById('locationResults');
+    const locationResultsContainer = document.getElementById('locationResultsContainer');
+    const locationInput = document.getElementById('registerLocation');
+    
+    if (postcodeInput) {
+        // Debounce the postcode search
+        let debounceTimer;
+        postcodeInput.addEventListener('input', function(e) {
+            clearTimeout(debounceTimer);
+            const postcode = e.target.value.trim();
+            
+            if (postcode.length > 4) {
+                debounceTimer = setTimeout(() => {
+                    searchLocations(postcode);
+                }, 500);
+            } else {
+                locationResultsContainer.style.display = 'none';
+            }
+        });
+    }
+    
+    function searchLocations(postcode) {
+        // Simulate API call to postcode lookup service
+        // In a real application, you would use a service like Google Places API or Postcodes.io
+        const mockLocations = [
+            { id: 1, name: `London (${postcode})`, lat: 51.5074, lng: -0.1278 },
+            { id: 2, name: `Manchester (${postcode})`, lat: 53.4808, lng: -2.2426 },
+            { id: 3, name: `Birmingham (${postcode})`, lat: 52.4862, lng: -1.8904 },
+            { id: 4, name: `Glasgow (${postcode})`, lat: 55.8642, lng: -4.2518 },
+            { id: 5, name: `Leeds (${postcode})`, lat: 53.8008, lng: -1.5491 }
+        ];
+        
+        displayLocationResults(mockLocations);
+    }
+    
+    function displayLocationResults(locations) {
+        if (!locationResults) return;
+        
+        locationResults.innerHTML = '';
+        
+        if (locations.length === 0) {
+            locationResultsContainer.style.display = 'none';
+            return;
+        }
+        
+        locations.forEach(location => {
+            const div = document.createElement('div');
+            div.className = 'location-result';
+            div.textContent = location.name;
+            div.addEventListener('click', () => {
+                locationInput.value = location.name;
+                postcodeInput.value = location.name; // Show selected location in postcode field
+                locationResultsContainer.style.display = 'none';
+            });
+            locationResults.appendChild(div);
+        });
+        
+        locationResultsContainer.style.display = 'block';
+    }
+    
+    // Hide results when clicking outside
+    document.addEventListener('click', function(e) {
+        if (postcodeInput && !postcodeInput.contains(e.target) && 
+            locationResultsContainer && !locationResultsContainer.contains(e.target)) {
+            locationResultsContainer.style.display = 'none';
+        }
+    });
 }
 
 // Check authentication status
@@ -118,7 +193,7 @@ function checkAuthStatus() {
 // Show UI for authenticated users
 function showAuthenticatedUI(user) {
     if (userWelcome && userName && authButtons) {
-        userName.textContent = user.name;
+        userName.textContent = `${user.firstName} ${user.lastName}`;
         userWelcome.style.display = 'flex';
         authButtons.style.display = 'none';
     }
@@ -162,9 +237,13 @@ async function handleLogin(e) {
             localStorage.setItem('token', data.token);
             localStorage.setItem('userData', JSON.stringify({
                 id: data._id,
-                name: data.name,
+                firstName: data.firstName,
+                lastName: data.lastName,
+                company: data.company,
                 email: data.email,
-                userType: data.userType
+                phone: data.phone,
+                userType: data.userType,
+                location: data.location
             }));
             
             // Update UI
@@ -186,10 +265,20 @@ async function handleLogin(e) {
 async function handleRegister(e) {
     e.preventDefault();
     
-    const name = document.getElementById('registerName').value;
+    const firstName = document.getElementById('registerFirstName').value;
+    const lastName = document.getElementById('registerLastName').value;
+    const company = document.getElementById('registerCompany').value;
     const email = document.getElementById('registerEmail').value;
+    const phone = document.getElementById('registerPhone').value;
     const password = document.getElementById('registerPassword').value;
     const userType = document.getElementById('registerUserType').value;
+    const location = document.getElementById('registerLocation').value;
+    
+    // Validate location was selected
+    if (!location) {
+        showError(registerError, 'Please select a location from the suggestions');
+        return;
+    }
     
     try {
         const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
@@ -197,7 +286,16 @@ async function handleRegister(e) {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ name, email, password, userType })
+            body: JSON.stringify({ 
+                firstName, 
+                lastName, 
+                company, 
+                email, 
+                phone, 
+                password, 
+                userType, 
+                location 
+            })
         });
         
         const data = await response.json();
@@ -207,9 +305,13 @@ async function handleRegister(e) {
             localStorage.setItem('token', data.token);
             localStorage.setItem('userData', JSON.stringify({
                 id: data._id,
-                name: data.name,
+                firstName: data.firstName,
+                lastName: data.lastName,
+                company: data.company,
                 email: data.email,
-                userType: data.userType
+                phone: data.phone,
+                userType: data.userType,
+                location: data.location
             }));
             
             // Update UI
@@ -281,12 +383,12 @@ async function handleAddListing(e) {
             loadUserListings();
             
             // Show success message
-            alert('Listing created successfully!');
+            alert('Service listing created successfully!');
         } else {
-            showError(listingError, data.message || 'Error creating listing');
+            showError(listingError, data.message || 'Error creating service listing');
         }
     } catch (error) {
-        showError(listingError, 'Error creating listing. Please try again.');
+        showError(listingError, 'Error creating service listing. Please try again.');
         console.error('Error:', error);
     }
 }
@@ -321,12 +423,12 @@ async function handleEditListing(e) {
             loadUserListings();
             
             // Show success message
-            alert('Listing updated successfully!');
+            alert('Service listing updated successfully!');
         } else {
-            showError(editListingError, data.message || 'Error updating listing');
+            showError(editListingError, data.message || 'Error updating service listing');
         }
     } catch (error) {
-        showError(editListingError, 'Error updating listing. Please try again.');
+        showError(editListingError, 'Error updating service listing. Please try again.');
         console.error('Error:', error);
     }
 }
@@ -337,7 +439,7 @@ async function loadUserListings() {
     
     if (!token || !dashboardContent) {
         if (dashboardContent) {
-            dashboardContent.innerHTML = '<p>Please log in to view your listings.</p>';
+            dashboardContent.innerHTML = '<p>Please log in to view your service listings.</p>';
         }
         return;
     }
@@ -353,11 +455,11 @@ async function loadUserListings() {
             const listings = await response.json();
             displayListings(listings);
         } else {
-            dashboardContent.innerHTML = '<p>Error loading your listings. Please try again.</p>';
+            dashboardContent.innerHTML = '<p>Error loading your service listings. Please try again.</p>';
         }
     } catch (error) {
         console.error('Error loading listings:', error);
-        dashboardContent.innerHTML = '<p>Error loading your listings. Please try again.</p>';
+        dashboardContent.innerHTML = '<p>Error loading your service listings. Please try again.</p>';
     }
 }
 
@@ -369,9 +471,9 @@ function displayListings(listings) {
         dashboardContent.innerHTML = `
             <div style="text-align: center; padding: 40px;">
                 <i class="fas fa-clipboard-list" style="font-size: 60px; color: #ddd; margin-bottom: 20px;"></i>
-                <h3>No Listings Yet</h3>
+                <h3>No Service Listings Yet</h3>
                 <p>Get started by adding your first service listing!</p>
-                <button class="btn btn-primary" id="addFirstListingBtn">Add Your First Listing</button>
+                <button class="btn btn-primary" id="addFirstListingBtn">Add Your First Service</button>
             </div>
         `;
         
@@ -391,7 +493,7 @@ function displayListings(listings) {
                 <div class="listing-card" data-id="${listing._id}">
                     <div class="listing-header">
                         <h3>${listing.title}</h3>
-                        <span class="listing-price">£${listing.price}</span>
+                        <span class="listing-price">£${listing.price}/hour</span>
                     </div>
                     <div class="listing-category">${listing.category}</div>
                     <p class="listing-description">${listing.description}</p>
@@ -447,56 +549,8 @@ async function editListing(id) {
             // Show edit modal
             showModal(editListingModal);
         } else {
-            alert('Error loading listing details');
+            alert('Error loading service details');
         }
     } catch (error) {
         console.error('Error:', error);
-        alert('Error loading listing details');
-    }
-}
-
-// Delete Listing
-async function deleteListing(id) {
-    if (!confirm('Are you sure you want to delete this listing?')) {
-        return;
-    }
-    
-    const token = localStorage.getItem('token');
-    
-    try {
-        const response = await fetch(`${API_BASE_URL}/api/listings/${id}`, {
-            method: 'DELETE',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        });
-        
-        if (response.ok) {
-            // Reload listings
-            loadUserListings();
-            alert('Listing deleted successfully!');
-        } else {
-            const data = await response.json();
-            alert(data.message || 'Error deleting listing');
-        }
-    } catch (error) {
-        console.error('Error:', error);
-        alert('Error deleting listing');
-    }
-}
-
-// Show Error Message
-function showError(element, message) {
-    if (!element) return;
-    
-    element.textContent = message;
-    element.style.display = 'block';
-    
-    // Hide error after 5 seconds
-    setTimeout(() => {
-        element.style.display = 'none';
-    }, 5000);
-}
-
-// Initialize the app when DOM is loaded
-document.addEventListener('DOMContentLoaded', initApp);
+        alert('Error loading service details
