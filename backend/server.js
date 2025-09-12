@@ -2,11 +2,6 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
-require('dotenv').config();
-
-// Import routes
-const authRoutes = require('./routes/auth');
-const listingRoutes = require('./routes/listings');
 
 const app = express();
 
@@ -14,36 +9,33 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Serve static files from the frontend in production
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '../frontend')));
-  
-  app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '../frontend', 'index.html'));
-  });
-}
+// Serve static files from frontend in production
+app.use(express.static(path.join(__dirname, '../frontend')));
 
-// API Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/listings', listingRoutes);
-
-// Basic API route
-app.get('/api', (req, res) => {
-  res.json({ message: 'ServiceHub API is running!' });
+// Simple test route
+app.get('/api/test', (req, res) => {
+  res.json({ message: 'API is working!' });
 });
 
-// Database connection
-mongoose.connect(process.env.MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-.then(() => console.log('MongoDB connected successfully'))
-.catch(err => console.log(err));
+// Basic auth routes (simplified for now)
+app.post('/api/register', (req, res) => {
+  // Registration logic will go here
+  res.json({ message: 'Registration endpoint' });
+});
 
+app.post('/api/login', (req, res) => {
+  // Login logic will go here
+  res.json({ message: 'Login endpoint' });
+});
+
+// Connect to MongoDB
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/servicehub';
+mongoose.connect(MONGODB_URI)
+  .then(() => console.log('Connected to MongoDB'))
+  .catch(err => console.log('MongoDB connection error:', err));
+
+// Start server
 const PORT = process.env.PORT || 5000;
-
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
-
-module.exports = app;
