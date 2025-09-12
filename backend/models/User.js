@@ -2,9 +2,18 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
 const UserSchema = new mongoose.Schema({
-  name: {
+  firstName: {
     type: String,
     required: true,
+    trim: true
+  },
+  lastName: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  company: {
+    type: String,
     trim: true
   },
   email: {
@@ -12,6 +21,10 @@ const UserSchema = new mongoose.Schema({
     required: true,
     unique: true,
     lowercase: true
+  },
+  phone: {
+    type: String,
+    required: true
   },
   password: {
     type: String,
@@ -21,6 +34,10 @@ const UserSchema = new mongoose.Schema({
   userType: {
     type: String,
     enum: ['client', 'professional'],
+    required: true
+  },
+  location: {
+    type: String,
     required: true
   },
   createdAt: {
