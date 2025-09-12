@@ -137,4 +137,143 @@ async function handleAddListing(e) {
             // Reload listings
             loadUserListings();
             
-           
+            // Show success message
+            alert('Service listing created successfully!');
+        } else {
+            const errorData = await response.json().catch(() => ({ message: 'Error creating listing' }));
+            showError(ELEMENT_IDS.LISTING_ERROR, errorData.message || `Server error: ${response.status}`);
+        }
+    } catch (error) {
+        console.error('Error creating listing:', error);
+        showError(ELEMENT_IDS.LISTING_ERROR, 'Error creating service listing. Please try again.');
+        
+        // Fallback: If API is down, simulate listing creation for demo
+        if (error.message.includes('Failed to fetch') || error.message.includes('Network')) {
+            console.log('API might be down, using demo mode');
+            alert('Demo mode: Listing creation simulated (backend might be down)');
+            hideAllModals();
+            loadUserListings();
+        }
+    } finally {
+        setButtonLoading(submitBtn, false);
+    }
+}
+
+// Handle edit listing
+async function handleEditListing(e) {
+    if (e) e.preventDefault();
+    
+    const id = getElement('editListingId').value;
+    const title = getElement('editListingTitle').value;
+    const category = getElement('editListingCategory').value;
+    const description = getElement('editListingDescription').value;
+    const price = getElement('editListingPrice').value;
+    
+    const token = localStorage.getItem('token');
+    
+    // Show loading state
+    const submitBtn = document.querySelector('#editListingForm button[type="submit"]');
+    setButtonLoading(submitBtn, true);
+    
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/listings/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ title, category, description, price })
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            
+            // Close modal and reload listings
+            hideAllModals();
+            loadUserListings();
+            
+            // Show success message
+            alert('Service listing updated successfully!');
+        } else {
+            const errorData = await response.json().catch(() => ({ message: 'Error updating listing' }));
+            showError(ELEMENT_IDS.EDIT_LISTING_ERROR, errorData.message || `Server error: ${response.status}`);
+        }
+    } catch (error) {
+        console.error('Error updating listing:', error);
+        showError(ELEMENT_IDS.EDIT_LISTING_ERROR, 'Error updating service listing. Please try again.');
+        
+        // Fallback: If API is down, simulate listing update for demo
+        if (error.message.includes('Failed to fetch') || error.message.includes('Network')) {
+            console.log('API might be down, using demo mode');
+            alert('Demo mode: Listing update simulated (backend might be down)');
+            hideAllModals();
+            loadUserListings();
+        }
+    } finally {
+        setButtonLoading(submitBtn, false);
+    }
+}
+
+// Edit Listing
+async function editListing(id) {
+    const token = localStorage.getItem('token');
+    
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/listings/${id}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        
+        if (response.ok) {
+            const listing = await response.json();
+            
+            // Populate edit form
+            getElement('editListingId').value = listing._id;
+            getElement('editListingTitle').value = listing.title;
+            getElement('editListingCategory').value = listing.category;
+            getElement('editListingDescription').value = listing.description;
+            getElement('editListingPrice').value = listing.price;
+            
+            // Show edit modal
+            showModal(ELEMENT_IDS.EDIT_LISTING_MODAL);
+        } else {
+            alert('Error loading service details');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error loading service details');
+    }
+}
+
+// Delete Listing
+async function deleteListing(id) {
+    if (!confirm('Are you sure you want to delete this listing?')) {
+        return;
+    }
+    
+    const token = localStorage.getItem('token');
+    
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/listings/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        
+        if (response.ok) {
+            // Reload listings
+            loadUserListings();
+            alert('Listing deleted successfully!');
+        } else {
+            const data = await response.json();
+            alert(data.message || 'Error deleting listing');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error deleting listing');
+    }
+}
+
+export { loadUserListings, handleAddListing, handleEditListing };
