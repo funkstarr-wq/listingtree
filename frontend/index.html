@@ -1,202 +1,45 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ServiceHub - Find Local Professionals</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <!-- Header -->
-    <header>
-        <div class="container">
-            <div class="header-content">
-                <a href="#" class="logo">
-                    <i class="fas fa-handshake"></i>
-                    ServiceHub
-                </a>
-                <div class="auth-container">
-                    <div class="user-welcome" id="userWelcome">
-                        <span>Welcome, <span id="userName"></span></span>
-                        <button class="btn btn-danger" id="logoutBtn">Logout</button>
-                    </div>
-                    <div id="authButtons">
-                        <button class="btn btn-outline" id="loginBtn">Login</button>
-                        <button class="btn btn-primary" id="registerBtn">Register</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </header>
-
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="container">
-            <h1>Find Trusted Professionals for Any Project</h1>
-            <p>Connect with local professionals for all your needs - from home renovation to personal services</p>
-            <button class="btn btn-primary" id="heroBtn">Get Started</button>
-        </div>
-    </section>
-
-    <!-- Dashboard Section -->
-    <section class="dashboard container" id="dashboardSection">
-        <div class="dashboard-header">
-            <h2>Your Dashboard</h2>
-            <button class="btn btn-primary" id="addListingBtn">Add New Listing</button>
-        </div>
-        <div id="dashboardContent">
-            <p>Welcome to your dashboard! Here you can manage your service listings.</p>
-        </div>
-    </section>
-
-    <!-- Login Modal -->
-    <div class="modal" id="loginModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Login to Your Account</h2>
-                <button class="close-modal">&times;</button>
-            </div>
-            <div class="alert alert-danger" id="loginError"></div>
-            <form id="loginForm">
-                <div class="form-group">
-                    <label for="loginEmail">Email</label>
-                    <input type="email" id="loginEmail" class="form-control" placeholder="Your email" required>
-                </div>
-                <div class="form-group">
-                    <label for="loginPassword">Password</label>
-                    <input type="password" id="loginPassword" class="form-control" placeholder="Your password" required>
-                </div>
-                <button type="submit" class="btn btn-primary" style="width: 100%;">Login</button>
-            </form>
-            <p style="text-align: center; margin-top: 20px;">
-                Don't have an account? <a href="#" id="switchToRegister" style="color: var(--primary);">Register</a>
-            </p>
-        </div>
+<form id="registerForm">
+    <div class="form-group">
+        <label for="registerFirstName">First Name</label>
+        <input type="text" id="registerFirstName" class="form-control" placeholder="Your first name" required>
     </div>
-
-    <!-- Register Modal -->
-    <div class="modal" id="registerModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Create an Account</h2>
-                <button class="close-modal">&times;</button>
-            </div>
-            <div class="alert alert-danger" id="registerError"></div>
-            <form id="registerForm">
-                <div class="form-group">
-                    <label for="registerName">Full Name</label>
-                    <input type="text" id="registerName" class="form-control" placeholder="Your full name" required>
-                </div>
-                <div class="form-group">
-                    <label for="registerEmail">Email</label>
-                    <input type="email" id="registerEmail" class="form-control" placeholder="Your email" required>
-                </div>
-                <div class="form-group">
-                    <label for="registerPassword">Password</label>
-                    <input type="password" id="registerPassword" class="form-control" placeholder="Create a password" required>
-                </div>
-                <div class="form-group">
-                    <label for="registerUserType">I am a:</label>
-                    <select id="registerUserType" class="form-control" required>
-                        <option value="">Select user type</option>
-                        <option value="client">Client looking for services</option>
-                        <option value="professional">Service professional</option>
-                    </select>
-                </div>
-                <button type="submit" class="btn btn-primary" style="width: 100%;">Create Account</button>
-            </form>
-            <p style="text-align: center; margin-top: 20px;">
-                Already have an account? <a href="#" id="switchToLogin" style="color: var(--primary);">Login</a>
-            </p>
-        </div>
+    <div class="form-group">
+        <label for="registerLastName">Last Name</label>
+        <input type="text" id="registerLastName" class="form-control" placeholder="Your last name" required>
     </div>
-
-    <!-- Add Listing Modal -->
-    <div class="modal" id="addListingModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Add New Service Listing</h2>
-                <button class="close-modal">&times;</button>
-            </div>
-            <div class="alert alert-danger" id="listingError"></div>
-            <form id="addListingForm">
-                <div class="form-group">
-                    <label for="listingTitle">Service Title</label>
-                    <input type="text" id="listingTitle" class="form-control" placeholder="e.g., Professional Web Development" required>
-                </div>
-                <div class="form-group">
-                    <label for="listingCategory">Category</label>
-                    <select id="listingCategory" class="form-control" required>
-                        <option value="">Select a category</option>
-                        <option value="Web Development">Web Development</option>
-                        <option value="Graphic Design">Graphic Design</option>
-                        <option value="Home Renovation">Home Renovation</option>
-                        <option value="Personal Training">Personal Training</option>
-                        <option value="Event Planning">Event Planning</option>
-                        <option value="Photography">Photography</option>
-                        <option value="Writing & Translation">Writing & Translation</option>
-                        <option value="Marketing">Marketing</option>
-                        <option value="Consulting">Consulting</option>
-                        <option value="Other">Other</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="listingDescription">Description</label>
-                    <textarea id="listingDescription" class="form-control" rows="4" placeholder="Describe your service in detail..." required></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="listingPrice">Price (£)</label>
-                    <input type="number" id="listingPrice" class="form-control" placeholder="e.g., 250" min="0" step="0.01" required>
-                </div>
-                <button type="submit" class="btn btn-primary" style="width: 100%;">Create Listing</button>
-            </form>
-        </div>
+    <div class="form-group">
+        <label for="registerCompany">Company Name (optional)</label>
+        <input type="text" id="registerCompany" class="form-control" placeholder="Your company name">
     </div>
-
-    <!-- Edit Listing Modal -->
-    <div class="modal" id="editListingModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Edit Service Listing</h2>
-                <button class="close-modal">&times;</button>
-            </div>
-            <div class="alert alert-danger" id="editListingError"></div>
-            <form id="editListingForm">
-                <input type="hidden" id="editListingId">
-                <div class="form-group">
-                    <label for="editListingTitle">Service Title</label>
-                    <input type="text" id="editListingTitle" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label for="editListingCategory">Category</label>
-                    <select id="editListingCategory" class="form-control" required>
-                        <option value="">Select a category</option>
-                        <option value="Web Development">Web Development</option>
-                        <option value="Graphic Design">Graphic Design</option>
-                        <option value="Home Renovation">Home Renovation</option>
-                        <option value="Personal Training">Personal Training</option>
-                        <option value="Event Planning">Event Planning</option>
-                        <option value="Photography">Photography</option>
-                        <option value="Writing & Translation">Writing & Translation</option>
-                        <option value="Marketing">Marketing</option>
-                        <option value="Consulting">Consulting</option>
-                        <option value="Other">Other</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="editListingDescription">Description</label>
-                    <textarea id="editListingDescription" class="form-control" rows="4" required></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="editListingPrice">Price (£)</label>
-                    <input type="number" id="editListingPrice" class="form-control" min="0" step="0.01" required>
-                </div>
-                <button type="submit" class="btn btn-primary" style="width: 100%;">Update Listing</button>
-            </form>
-        </div>
+    <div class="form-group">
+        <label for="registerEmail">Email</label>
+        <input type="email" id="registerEmail" class="form-control" placeholder="Your email" required>
     </div>
-
-    <script src="script.js"></script>
-</body>
-</html>
+    <div class="form-group">
+        <label for="registerPhone">Phone Number</label>
+        <input type="tel" id="registerPhone" class="form-control" placeholder="Your phone number" required>
+    </div>
+    <div class="form-group">
+        <label for="registerPassword">Password</label>
+        <input type="password" id="registerPassword" class="form-control" placeholder="Create a password" required>
+    </div>
+    <div class="form-group">
+        <label for="registerUserType">I am a:</label>
+        <select id="registerUserType" class="form-control" required>
+            <option value="">Select user type</option>
+            <option value="client">Client looking for services</option>
+            <option value="professional">Service professional</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="registerPostcode">Postcode</label>
+        <input type="text" id="registerPostcode" class="form-control" placeholder="Your postcode" required>
+        <small class="form-text">Enter your postcode to find your location</small>
+    </div>
+    <div class="form-group" id="locationResultsContainer" style="display: none;">
+        <label>Select your location:</label>
+        <div id="locationResults" class="location-results"></div>
+    </div>
+    <input type="hidden" id="registerLocation" name="location">
+    <button type="submit" class="btn btn-primary" style="width: 100%;">Create Account</button>
+</form>
