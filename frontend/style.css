@@ -291,6 +291,102 @@ header {
     gap: 10px;
 }
 
+/* Two-column form layout */
+.form-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.form-group-half {
+    flex: 1 0 calc(50% - 15px);
+    min-width: 200px;
+}
+
+/* Location search improvements */
+.location-results {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    max-height: 200px;
+    overflow-y: auto;
+    margin-top: 5px;
+    background: white;
+    position: absolute;
+    width: calc(100% - 2px);
+    z-index: 10;
+}
+
+.location-result {
+    padding: 10px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+    transition: background-color 0.2s;
+}
+
+.location-result:hover {
+    background-color: #f5f5f5;
+}
+
+.location-result:last-child {
+    border-bottom: none;
+}
+
+/* Form group adjustments for new layout */
+.form-group {
+    margin-bottom: 20px;
+    position: relative;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .form-row {
+        flex-direction: column;
+        gap: 0;
+    }
+    
+    .form-group-half {
+        flex: 1 0 100%;
+        min-width: 100%;
+    }
+    
+    .location-results {
+        position: relative;
+        width: 100%;
+    }
+}
+
+/* Improve form appearance */
+.form-control {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+}
+
+.form-control:focus {
+    border-color: var(--primary);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(45, 91, 255, 0.2);
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #333;
+}
+
+.form-text {
+    font-size: 0.85em;
+    color: #6c757d;
+    margin-top: 5px;
+    display: block;
+}
+
+
 /* Location Search Styles */
 .location-results {
     border: 1px solid #ddd;
