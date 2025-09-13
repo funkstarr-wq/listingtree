@@ -684,13 +684,27 @@ function initLocationSearch() {
             clearTimeout(debounceTimer);
             const postcode = e.target.value.trim();
             
-            if (postcode.length > 4) {
+            // Hide results if input is cleared
+            if (postcode.length === 0) {
+                locationResultsContainer.style.display = 'none';
+                locationInput.value = '';
+                return;
+            }
+            
+            if (postcode.length > 3) {
                 debounceTimer = setTimeout(() => {
                     searchLocations(postcode);
                 }, 500);
             } else {
                 locationResultsContainer.style.display = 'none';
             }
+        });
+        
+        // Hide results when postcode input loses focus
+        postcodeInput.addEventListener('blur', function() {
+            setTimeout(() => {
+                locationResultsContainer.style.display = 'none';
+            }, 200);
         });
         
         function searchLocations(postcode) {
@@ -700,7 +714,10 @@ function initLocationSearch() {
                 { id: 2, name: `Manchester (${postcode})` },
                 { id: 3, name: `Birmingham (${postcode})` },
                 { id: 4, name: `Glasgow (${postcode})` },
-                { id: 5, name: `Leeds (${postcode})` }
+                { id: 5, name: `Leeds (${postcode})` },
+                { id: 6, name: `Liverpool (${postcode})` },
+                { id: 7, name: `Bristol (${postcode})` },
+                { id: 8, name: `Sheffield (${postcode})` }
             ];
             
             displayLocationResults(mockLocations);
@@ -720,7 +737,6 @@ function initLocationSearch() {
                 div.textContent = location.name;
                 div.addEventListener('click', function() {
                     locationInput.value = location.name;
-                    postcodeInput.value = location.name;
                     locationResultsContainer.style.display = 'none';
                 });
                 locationResults.appendChild(div);
