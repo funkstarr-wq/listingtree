@@ -112,63 +112,87 @@
     </div>
 
     <!-- Register Modal -->
-    <div class="modal" id="registerModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Create an Account</h2>
-                <button class="close-modal">&times;</button>
+<div class="modal" id="registerModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Create an Account</h2>
+            <button class="close-modal">&times;</button>
+        </div>
+        <div class="alert alert-danger" id="registerError"></div>
+        <form id="registerForm">
+            <!-- First Row: Name Fields -->
+            <div class="form-row">
+                <div class="form-group form-group-half">
+                    <label for="registerFirstName">First Name *</label>
+                    <input type="text" id="registerFirstName" class="form-control" placeholder="First name" required>
+                </div>
+                <div class="form-group form-group-half">
+                    <label for="registerLastName">Last Name *</label>
+                    <input type="text" id="registerLastName" class="form-control" placeholder="Last name" required>
+                </div>
             </div>
-            <div class="alert alert-danger" id="registerError"></div>
-            <form id="registerForm">
-                <div class="form-group">
-                    <label for="registerFirstName">First Name</label>
-                    <input type="text" id="registerFirstName" class="form-control" placeholder="Your first name" required>
+
+            <!-- Second Row: Email and Phone -->
+            <div class="form-row">
+                <div class="form-group form-group-half">
+                    <label for="registerEmail">Email Address *</label>
+                    <input type="email" id="registerEmail" class="form-control" placeholder="your@email.com" required>
                 </div>
-                <div class="form-group">
-                    <label for="registerLastName">Last Name</label>
-                    <input type="text" id="registerLastName" class="form-control" placeholder="Your last name" required>
+                <div class="form-group form-group-half">
+                    <label for="registerPhone">Phone Number *</label>
+                    <input type="tel" id="registerPhone" class="form-control" placeholder="(123) 456-7890" required>
                 </div>
-                <div class="form-group">
-                    <label for="registerCompany">Company Name (optional)</label>
-                    <input type="text" id="registerCompany" class="form-control" placeholder="Your company name">
+            </div>
+
+            <!-- Third Row: Company and User Type -->
+            <div class="form-row">
+                <div class="form-group form-group-half">
+                    <label for="registerCompany">Company Name</label>
+                    <input type="text" id="registerCompany" class="form-control" placeholder="Your company (optional)">
                 </div>
-                <div class="form-group">
-                    <label for="registerEmail">Email</label>
-                    <input type="email" id="registerEmail" class="form-control" placeholder="Your email" required>
-                </div>
-                <div class="form-group">
-                    <label for="registerPhone">Phone Number</label>
-                    <input type="tel" id="registerPhone" class="form-control" placeholder="Your phone number" required>
-                </div>
-                <div class="form-group">
-                    <label for="registerPassword">Password</label>
-                    <input type="password" id="registerPassword" class="form-control" placeholder="Create a password" required>
-                </div>
-                <div class="form-group">
-                    <label for="registerUserType">I am a:</label>
+                <div class="form-group form-group-half">
+                    <label for="registerUserType">I am a: *</label>
                     <select id="registerUserType" class="form-control" required>
                         <option value="">Select user type</option>
                         <option value="client">Client looking for services</option>
                         <option value="professional">Service professional</option>
                     </select>
                 </div>
-                <div class="form-group">
-                    <label for="registerPostcode">Postcode</label>
-                    <input type="text" id="registerPostcode" class="form-control" placeholder="Your postcode" required>
+            </div>
+
+            <!-- Fourth Row: Password -->
+            <div class="form-group">
+                <label for="registerPassword">Password *</label>
+                <input type="password" id="registerPassword" class="form-control" placeholder="Create a strong password" required>
+                <small class="form-text">Must be at least 6 characters</small>
+            </div>
+
+            <!-- Fifth Row: Location -->
+            <div class="form-row">
+                <div class="form-group form-group-half">
+                    <label for="registerPostcode">Postcode *</label>
+                    <input type="text" id="registerPostcode" class="form-control" placeholder="e.g., SW1A 1AA" required>
                     <small class="form-text">Enter your postcode to find your location</small>
                 </div>
-                <div class="form-group" id="locationResultsContainer" style="display: none;">
-                    <label>Select your location:</label>
-                    <div id="locationResults" class="location-results"></div>
+                <div class="form-group form-group-half">
+                    <label for="registerLocation">Selected Location</label>
+                    <input type="text" id="registerLocation" class="form-control" placeholder="Select from options" readonly>
                 </div>
-                <input type="hidden" id="registerLocation" name="location">
-                <button type="submit" class="btn btn-primary" style="width: 100%;">Create Account</button>
-            </form>
-            <p style="text-align: center; margin-top: 20px;">
-                Already have an account? <a href="#" id="switchToLogin" style="color: var(--primary);">Login</a>
-            </p>
-        </div>
+            </div>
+
+            <!-- Location results dropdown -->
+            <div class="form-group" id="locationResultsContainer" style="display: none;">
+                <label>Select your location:</label>
+                <div id="locationResults" class="location-results"></div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 15px;">Create Account</button>
+        </form>
+        <p style="text-align: center; margin-top: 20px;">
+            Already have an account? <a href="#" id="switchToLogin" style="color: var(--primary);">Login</a>
+        </p>
     </div>
+</div>
 
     <!-- Add Listing Modal -->
     <div class="modal" id="addListingModal">
